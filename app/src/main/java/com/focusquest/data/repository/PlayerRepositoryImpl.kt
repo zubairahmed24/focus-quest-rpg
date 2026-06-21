@@ -8,6 +8,7 @@ import com.focusquest.util.DateTimeUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 /**
@@ -15,8 +16,6 @@ import javax.inject.Inject
  *
  * Wraps PlayerStateDao and converts between Room entities and domain models
  * using PlayerStateMapper. The domain layer never sees entities.
- *
- * @Inject constructor makes this Hilt-providable when bound via RepositoryModule.
  */
 class PlayerRepositoryImpl @Inject constructor(
     private val dao: PlayerStateDao,
@@ -59,5 +58,9 @@ class PlayerRepositoryImpl @Inject constructor(
 
     override suspend fun incrementBossesDefeated() {
         dao.incrementBossesDefeated()
+    }
+
+    override suspend fun updateSessionStartTime(time: LocalDateTime?) {
+        dao.updateSessionStartTime(time?.let { DateTimeUtils.formatDateTime(it) })
     }
 }

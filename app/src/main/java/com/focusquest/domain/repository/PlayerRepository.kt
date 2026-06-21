@@ -3,6 +3,7 @@ package com.focusquest.domain.repository
 import com.focusquest.domain.model.PlayerState
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * Repository contract for player state operations.
@@ -42,4 +43,11 @@ interface PlayerRepository {
 
     /** Increment the total bosses defeated counter by 1. */
     suspend fun incrementBossesDefeated()
+
+    /**
+     * Sets or clears the active focus session start time.
+     * Pass null to clear (session completed or abandoned).
+     * Used by FocusTimerService for timestamp-based recovery. See ADR-001.
+     */
+    suspend fun updateSessionStartTime(time: LocalDateTime?)
 }

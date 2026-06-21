@@ -7,8 +7,12 @@ import androidx.room.PrimaryKey
  * Singleton row storing the player's overall game state.
  * There is only ever one row with id = 1.
  *
- * Dates are stored as ISO strings (yyyy-MM-dd) because Room does not
+ * Dates are stored as ISO strings because Room does not
  * natively support java.time types. Conversion happens in the mapper layer.
+ *
+ * @param activeSessionStartTime ISO datetime string of the current focus session's
+ *   start time, or null if no session is active. Used by FocusTimerService for
+ *   timestamp-based timer recovery after process death. See ADR-001.
  */
 @Entity(tableName = "player_state")
 data class PlayerStateEntity(
@@ -21,5 +25,6 @@ data class PlayerStateEntity(
     val lastFocusDate: String,
     val totalFocusMinutes: Int = 0,
     val totalSessionsCompleted: Int = 0,
-    val totalBossesDefeated: Int = 0
+    val totalBossesDefeated: Int = 0,
+    val activeSessionStartTime: String? = null
 )

@@ -38,4 +38,12 @@ interface PlayerStateDao {
 
     @androidx.room.Query("UPDATE player_state SET totalBossesDefeated = totalBossesDefeated + 1 WHERE id = 1")
     suspend fun incrementBossesDefeated()
+
+    /**
+     * Sets or clears the active focus session start time.
+     * Pass null to clear (session completed or abandoned).
+     * Used by FocusTimerService for timestamp-based recovery. See ADR-001.
+     */
+    @androidx.room.Query("UPDATE player_state SET activeSessionStartTime = :time WHERE id = 1")
+    suspend fun updateSessionStartTime(time: String?)
 }

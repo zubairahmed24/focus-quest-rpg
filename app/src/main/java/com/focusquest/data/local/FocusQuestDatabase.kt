@@ -30,7 +30,7 @@ import java.time.LocalDate
  *
  * On first creation, the database is pre-populated with:
  *  - 5 boss entities (Boss 1 unlocked, Bosses 2-5 locked)
- *  - Initial player state (level 1, 0 XP, boss 1, 0 streak)
+ *  - Initial player state (level 1, 0 XP, boss 1, 0 streak, no active session)
  */
 @Database(
     entities = [
@@ -39,7 +39,7 @@ import java.time.LocalDate
         FocusSessionEntity::class,
         DailyFocusLogEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class FocusQuestDatabase : RoomDatabase() {
@@ -94,8 +94,8 @@ abstract class FocusQuestDatabase : RoomDatabase() {
             private fun seedPlayerState(db: SupportSQLiteDatabase) {
                 val today = DateTimeUtils.formatDate(LocalDate.now())
                 db.execSQL(
-                    "INSERT INTO player_state (id, level, xp, currentBossId, currentBossHpRemaining, streak, lastFocusDate, totalFocusMinutes, totalSessionsCompleted, totalBossesDefeated) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    arrayOf(1L, 1, 0, 1, 100, 0, today, 0, 0, 0)
+                    "INSERT INTO player_state (id, level, xp, currentBossId, currentBossHpRemaining, streak, lastFocusDate, totalFocusMinutes, totalSessionsCompleted, totalBossesDefeated, activeSessionStartTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    arrayOf(1L, 1, 0, 1, 100, 0, today, 0, 0, 0, null)
                 )
             }
         }

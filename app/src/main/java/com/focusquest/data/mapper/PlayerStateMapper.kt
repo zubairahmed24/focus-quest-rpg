@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 /**
  * Converts between PlayerStateEntity (Room, ISO string dates)
- * and PlayerState (domain, LocalDate).
+ * and PlayerState (domain, LocalDate/LocalDateTime).
  *
  * This mapper lives in the data layer because it depends on the entity
  * and knows about the storage format. The domain layer never sees entities.
@@ -25,7 +25,10 @@ class PlayerStateMapper @Inject constructor() {
             lastFocusDate = DateTimeUtils.parseDate(entity.lastFocusDate),
             totalFocusMinutes = entity.totalFocusMinutes,
             totalSessionsCompleted = entity.totalSessionsCompleted,
-            totalBossesDefeated = entity.totalBossesDefeated
+            totalBossesDefeated = entity.totalBossesDefeated,
+            activeSessionStartTime = entity.activeSessionStartTime?.let {
+                DateTimeUtils.parseDateTime(it)
+            }
         )
     }
 
@@ -40,7 +43,10 @@ class PlayerStateMapper @Inject constructor() {
             lastFocusDate = DateTimeUtils.formatDate(domain.lastFocusDate),
             totalFocusMinutes = domain.totalFocusMinutes,
             totalSessionsCompleted = domain.totalSessionsCompleted,
-            totalBossesDefeated = domain.totalBossesDefeated
+            totalBossesDefeated = domain.totalBossesDefeated,
+            activeSessionStartTime = domain.activeSessionStartTime?.let {
+                DateTimeUtils.formatDateTime(it)
+            }
         )
     }
 }

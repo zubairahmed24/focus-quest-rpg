@@ -1,12 +1,17 @@
 package com.focusquest.domain.model
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * Domain representation of the player's game state.
  *
- * This is a pure Kotlin model — no Android framework dependencies.
+ * Pure Kotlin — no Android framework dependencies.
  * The data layer converts between this and PlayerStateEntity via mappers.
+ *
+ * @param activeSessionStartTime The start time of the currently active focus
+ *   session, or null if no session is active. Used by FocusTimerService for
+ *   timestamp-based timer recovery. See ADR-001.
  */
 data class PlayerState(
     val id: Long = 1,
@@ -18,5 +23,6 @@ data class PlayerState(
     val lastFocusDate: LocalDate = LocalDate.now(),
     val totalFocusMinutes: Int = 0,
     val totalSessionsCompleted: Int = 0,
-    val totalBossesDefeated: Int = 0
+    val totalBossesDefeated: Int = 0,
+    val activeSessionStartTime: LocalDateTime? = null
 )
