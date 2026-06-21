@@ -21,7 +21,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.focusquest.presentation.battle.BattleScreen
 
+/**
+ * Root navigation host for Focus Quest RPG.
+ *
+ * Navigation structure:
+ * - Battle (start destination, bottom nav tab)
+ * - Stats (bottom nav tab) — placeholder for M4
+ * - Victory (modal, navigated to from Battle) — placeholder for M4
+ *
+ * Bottom navigation is only shown on Battle and Stats screens.
+ * Victory is a modal overlay (no bottom bar).
+ */
 @Composable
 fun FocusQuestNavHost(
     navController: NavHostController = rememberNavController()
@@ -70,20 +82,10 @@ fun FocusQuestNavHost(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Battle.route) {
-                // Placeholder — will be replaced with BattleScreen
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "⚔️ Focus Quest",
-                        style = androidx.compose.material3.MaterialTheme.typography.displayMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                BattleScreen()
             }
             composable(Screen.Victory.route) {
-                // Placeholder — will be replaced with VictoryScreen
+                // Placeholder — will be replaced with VictoryScreen in M4
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -96,7 +98,7 @@ fun FocusQuestNavHost(
                 }
             }
             composable(Screen.Stats.route) {
-                // Placeholder — will be replaced with StatsScreen
+                // Placeholder — will be replaced with StatsScreen in M4
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
