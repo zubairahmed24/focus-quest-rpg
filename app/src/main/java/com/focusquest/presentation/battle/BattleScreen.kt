@@ -21,9 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.focusquest.domain.model.BattleResult
 import com.focusquest.domain.model.FocusTimerState
 import com.focusquest.presentation.battle.components.BossSprite
 import com.focusquest.presentation.battle.components.HpBar
@@ -35,6 +35,9 @@ import com.focusquest.presentation.components.FQButtonSize
 import com.focusquest.presentation.components.FQButtonVariant
 import com.focusquest.presentation.components.FQCard
 import com.focusquest.presentation.theme.FocusQuestTheme
+import com.focusquest.presentation.victory.VictoryScreen
+import com.focusquest.presentation.victory.VictoryUiState
+import com.focusquest.presentation.victory.toVictoryUiState
 
 /**
  * Battle Screen — the main game screen.
@@ -45,13 +48,11 @@ import com.focusquest.presentation.theme.FocusQuestTheme
  * 3. Timer section: Circular timer display
  * 4. Action buttons: Start/Pause/Resume/Give Up
  *
- * All state is observed from BattleViewModel via StateFlow.
- * No business logic exists in this composable — it only renders state
- * and dispatches actions.
+ * On a boss defeat (or a returning campaign-complete state) the screen delegates to
+ * [VictoryScreen] — the victory UI is no longer inlined here (#12).
  *
  * Styling is fully design-system driven: colors via [FocusQuestTheme.colors],
- * spacing via [FocusQuestTheme.spacing], and all buttons/cards via the FQ*
- * components. No raw hex or deprecated aliases.
+ * spacing via [FocusQuestTheme.spacing], buttons/cards via the FQ* components.
  *
  * @param viewModel Injected Hilt ViewModel
  */
@@ -88,21 +89,32 @@ private fun BattleScreenContent(
         return
     }
 
-    // Show victory overlay if boss was defeated
-    if (state.showVictory && state.lastBattleResult != null) {
-        VictoryOverlay(
-            result = state.lastBattleResult,
-            campaignComplete = state.campaignComplete,
-            onDismiss = { onAction(BattleUiAction.DismissVictory) },
-            onStartBreak = { onAction(BattleUiAction.StartBreak) }
+    // Victory — boss defeated. Delegates to the dedicated VictoryScreen (#12).
+    val result = state.lastBattleResult
+    if (state.showVictory && result is BattleResult.BossDefeated) {
+        VictoryScreen(
+            state = result.toVictoryUiState(
+                playerLevel = state.playerLevel,
+                isCampaignComplete = state.campaignComplete
+            ),
+            onContinue = { onAction(BattleUiAction.DismissVictory) },
+            onTakeBreak = { onAction(BattleUiAction.StartBreak) }
         )
         return
     }
 
-    // Show campaign complete overlay
+    // Returning to a campaign that is already fully complete (no fresh defeat).
     if (state.campaignComplete && !state.showVictory) {
-        CampaignCompleteOverlay(
-            onDismiss = { onAction(BattleUiAction.DismissVictory) }
+        VictoryScreen(
+            state = VictoryUiState(
+                defeatedBossName = "",
+                xpGained = 0,
+                playerLevel = state.playerLevel,
+                nextBossName = null,
+                isCampaignComplete = true,
+                isCampaignSummary = true
+            ),
+            onContinue = { onAction(BattleUiAction.DismissVictory) }
         )
         return
     }
@@ -148,7 +160,6 @@ private fun BattleScreenContent(
                 bossMaxHp = state.bossMaxHp
             )
         } else {
-            // No current boss — campaign should be complete
             Text(
                 text = "All bosses defeated!",
                 style = MaterialTheme.typography.headlineMedium,
@@ -367,129 +378,6 @@ private fun ActionButtons(
                     onClick = { onAction(BattleUiAction.GiveUp) },
                     modifier = Modifier.weight(1f),
                     variant = FQButtonVariant.Danger
-                )
-            }
-        }
-    }
-}
-
-/**
- * Inline victory overlay shown when a boss is defeated.
- * In M4, this will be replaced with a full VictoryScreen navigation (issue #12 / #19).
- */
-@Composable
-private fun VictoryOverlay(
-    result: com.focusquest.domain.model.BattleResult.BossDefeated,
-    campaignComplete: Boolean,
-    onDismiss: () -> Unit,
-    onStartBreak: () -> Unit
-) {
-    val colors = FocusQuestTheme.colors
-    val spacing = FocusQuestTheme.spacing
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(spacing.sm),
-        contentAlignment = Alignment.Center
-    ) {
-        FQCard(modifier = Modifier.fillMaxWidth()) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(spacing.sm)
-            ) {
-                Text(
-                    text = "🎉 BOSS DEFEATED!",
-                    style = MaterialTheme.typography.displayMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.cta,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = result.boss.name,
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = colors.textPrimary
-                )
-                Text(
-                    text = "+${result.xpGained} XP",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = colors.xp
-                )
-                if (campaignComplete) {
-                    Text(
-                        text = "🏆 Campaign Complete!\nAll bosses defeated!",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = colors.cta,
-                        textAlign = TextAlign.Center
-                    )
-                } else if (result.nextBoss != null) {
-                    Text(
-                        text = "Next boss: ${result.nextBoss.name}",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = colors.textSecondary
-                    )
-                }
-                Spacer(modifier = Modifier.height(spacing.xxs))
-                FQButton(
-                    text = "Continue",
-                    onClick = onDismiss,
-                    modifier = Modifier.fillMaxWidth(),
-                    variant = FQButtonVariant.Cta
-                )
-                FQButton(
-                    text = "Take a Break",
-                    onClick = onStartBreak,
-                    modifier = Modifier.fillMaxWidth(),
-                    variant = FQButtonVariant.Outline
-                )
-            }
-        }
-    }
-}
-
-/**
- * Campaign complete overlay shown when all 5 bosses are defeated.
- */
-@Composable
-private fun CampaignCompleteOverlay(
-    onDismiss: () -> Unit
-) {
-    val colors = FocusQuestTheme.colors
-    val spacing = FocusQuestTheme.spacing
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(spacing.sm),
-        contentAlignment = Alignment.Center
-    ) {
-        FQCard(modifier = Modifier.fillMaxWidth()) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(spacing.sm)
-            ) {
-                Text(
-                    text = "🏆",
-                    fontSize = 64.sp
-                )
-                Text(
-                    text = "Campaign Complete!",
-                    style = MaterialTheme.typography.displayMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.cta,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = "You defeated all 5 procrastination bosses!\nMore bosses coming soon.",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = colors.textSecondary,
-                    textAlign = TextAlign.Center
-                )
-                FQButton(
-                    text = "Continue",
-                    onClick = onDismiss,
-                    modifier = Modifier.fillMaxWidth(),
-                    variant = FQButtonVariant.Cta
                 )
             }
         }
