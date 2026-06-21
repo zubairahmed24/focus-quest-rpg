@@ -3,13 +3,13 @@ package com.focusquest.presentation.battle.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,20 +18,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.focusquest.presentation.theme.HpGreen
-import com.focusquest.presentation.theme.HpRed
-import com.focusquest.presentation.theme.HpYellow
+import com.focusquest.presentation.theme.FocusQuestTheme
 
 /**
  * Animated HP bar with color transitions based on percentage.
  *
- * - Green when HP > 50%
- * - Yellow when HP 25-50%
- * - Red when HP < 25%
+ * - hpHigh (green) when HP > 50%
+ * - hpMid (yellow) when HP 25-50%
+ * - hpLow (red) when HP < 25%
+ *
+ * Colors come from the design system via [FocusQuestTheme.colors] so the bar stays
+ * consistent with every other status surface in the app.
  *
  * @param currentHp Current HP value
  * @param maxHp Maximum HP value
@@ -43,12 +42,13 @@ fun HpBar(
     maxHp: Int,
     modifier: Modifier = Modifier
 ) {
+    val colors = FocusQuestTheme.colors
     val percentage = if (maxHp > 0) currentHp.toFloat() / maxHp.toFloat() else 0f
     val barColor by animateColorAsState(
         targetValue = when {
-            percentage > 0.5f -> HpGreen
-            percentage > 0.25f -> HpYellow
-            else -> HpRed
+            percentage > 0.5f -> colors.hpHigh
+            percentage > 0.25f -> colors.hpMid
+            else -> colors.hpLow
         },
         animationSpec = tween(durationMillis = 300),
         label = "hpBarColor"
@@ -57,19 +57,19 @@ fun HpBar(
     Column(modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "HP",
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = colors.textSecondary,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = "$currentHp / $maxHp",
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = colors.textSecondary,
                 fontWeight = FontWeight.Medium
             )
         }
@@ -79,7 +79,7 @@ fun HpBar(
                 .fillMaxWidth()
                 .height(12.dp)
                 .clip(RoundedCornerShape(6.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .background(colors.surfaceElevated)
         ) {
             Box(
                 modifier = Modifier
