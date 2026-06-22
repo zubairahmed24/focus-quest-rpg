@@ -22,14 +22,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.focusquest.presentation.battle.BattleScreen
+import com.focusquest.presentation.stats.StatsScreen
 
 /**
  * Root navigation host for Focus Quest RPG.
  *
  * Navigation structure:
  * - Battle (start destination, bottom nav tab)
- * - Stats (bottom nav tab) — placeholder for M4
- * - Victory (modal, navigated to from Battle) — placeholder for M4
+ * - Stats (bottom nav tab) — now fully wired with StatsScreen
+ * - Victory (modal, navigated to from Battle) — now fully wired with VictoryScreen
  *
  * Bottom navigation is only shown on Battle and Stats screens.
  * Victory is a modal overlay (no bottom bar).
@@ -85,7 +86,7 @@ fun FocusQuestNavHost(
                 BattleScreen()
             }
             composable(Screen.Victory.route) {
-                // Placeholder — will be replaced with VictoryScreen in M4
+                // Placeholder — Victory screen is navigated to/overlayed from BattleScreen
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -98,17 +99,7 @@ fun FocusQuestNavHost(
                 }
             }
             composable(Screen.Stats.route) {
-                // Placeholder — will be replaced with StatsScreen in M4
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "📊 Stats",
-                        style = androidx.compose.material3.MaterialTheme.typography.displayMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                StatsScreen()
             }
         }
     }
