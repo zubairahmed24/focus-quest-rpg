@@ -94,7 +94,9 @@ class BattleViewModel @Inject constructor(
                     showGiveUpDialog = _uiState.value.showGiveUpDialog,
                     showVictory = _uiState.value.showVictory,
                     lastBattleResult = _uiState.value.lastBattleResult,
-                    campaignComplete = boss == null && player.totalBossesDefeated >= 5
+                    campaignComplete = boss == null && player.totalBossesDefeated >= 5,
+                    totalFocusMinutes = player.totalFocusMinutes,
+                    totalBossesDefeated = player.totalBossesDefeated
                 )
             }
         }

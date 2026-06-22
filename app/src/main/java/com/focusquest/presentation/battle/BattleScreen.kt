@@ -16,6 +16,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -89,6 +92,19 @@ private fun BattleScreenContent(
         return
     }
 
+    var showShareDialog by remember { mutableStateOf(false) }
+
+    if (showShareDialog) {
+        com.focusquest.presentation.components.ShareDialog(
+            playerLevel = state.playerLevel,
+            streak = state.streak,
+            totalFocusTimeFormatted = com.focusquest.util.DateTimeUtils.formatFocusTime(state.totalFocusMinutes),
+            bossesDefeatedCount = state.totalBossesDefeated,
+            totalBossesCount = 5,
+            onDismiss = { showShareDialog = false }
+        )
+    }
+
     // Victory — boss defeated. Delegates to the dedicated VictoryScreen (#12).
     val result = state.lastBattleResult
     if (state.showVictory && result is BattleResult.BossDefeated) {
@@ -98,7 +114,8 @@ private fun BattleScreenContent(
                 isCampaignComplete = state.campaignComplete
             ),
             onContinue = { onAction(BattleUiAction.DismissVictory) },
-            onTakeBreak = { onAction(BattleUiAction.StartBreak) }
+            onTakeBreak = { onAction(BattleUiAction.StartBreak) },
+            onShare = { showShareDialog = true }
         )
         return
     }
@@ -114,7 +131,8 @@ private fun BattleScreenContent(
                 isCampaignComplete = true,
                 isCampaignSummary = true
             ),
-            onContinue = { onAction(BattleUiAction.DismissVictory) }
+            onContinue = { onAction(BattleUiAction.DismissVictory) },
+            onShare = { showShareDialog = true }
         )
         return
     }

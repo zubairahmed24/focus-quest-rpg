@@ -26,7 +26,9 @@ data class BattleUiState(
     val showGiveUpDialog: Boolean = false,
     val showVictory: Boolean = false,
     val lastBattleResult: BattleResult? = null,
-    val campaignComplete: Boolean = false
+    val campaignComplete: Boolean = false,
+    val totalFocusMinutes: Int = 0,
+    val totalBossesDefeated: Int = 0
 ) {
     /**
      * XP progress as a 0..1 fraction for the progress bar.

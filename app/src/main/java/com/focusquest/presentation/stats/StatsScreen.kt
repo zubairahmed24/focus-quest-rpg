@@ -20,11 +20,15 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -73,14 +77,43 @@ fun StatsScreenContent(
                 .padding(FocusQuestTheme.spacing.sm),
             verticalArrangement = Arrangement.spacedBy(FocusQuestTheme.spacing.md)
         ) {
-            // Header
-            Text(
-                text = "Stats Dashboard",
-                style = FocusQuestTheme.typography.displaySmall,
-                fontWeight = FontWeight.Bold,
-                color = c.textPrimary,
-                modifier = Modifier.padding(top = FocusQuestTheme.spacing.xs)
-            )
+            var showShareDialog by remember { mutableStateOf(false) }
+
+            if (showShareDialog) {
+                com.focusquest.presentation.components.ShareDialog(
+                    playerLevel = state.playerLevel,
+                    streak = state.currentStreak,
+                    totalFocusTimeFormatted = state.totalFocusTimeFormatted,
+                    bossesDefeatedCount = state.bossesDefeatedCount,
+                    totalBossesCount = state.totalBossesCount,
+                    onDismiss = { showShareDialog = false }
+                )
+            }
+
+            // Header Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Stats Dashboard",
+                    style = FocusQuestTheme.typography.displaySmall,
+                    fontWeight = FontWeight.Bold,
+                    color = c.textPrimary,
+                    modifier = Modifier.padding(top = FocusQuestTheme.spacing.xs)
+                )
+                androidx.compose.material3.IconButton(
+                    onClick = { showShareDialog = true },
+                    modifier = Modifier.padding(top = FocusQuestTheme.spacing.xs)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "Share Stats",
+                        tint = c.cta
+                    )
+                }
+            }
 
             // Stat Cards Grid (2x2)
             Column(
