@@ -12,13 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,6 +35,9 @@ import com.focusquest.presentation.battle.components.HpBar
 import com.focusquest.presentation.battle.components.TauntBubble
 import com.focusquest.presentation.battle.components.TimerDisplay
 import com.focusquest.presentation.components.ConfirmDialog
+import com.focusquest.presentation.components.FQButton
+import com.focusquest.presentation.components.FQButtonSize
+import com.focusquest.presentation.components.FQButtonVariant
 import com.focusquest.presentation.theme.Gold
 import com.focusquest.presentation.theme.StreakOrange
 
@@ -309,22 +309,13 @@ private fun ActionButtons(
 ) {
     when (timerState) {
         is FocusTimerState.Idle -> {
-            Button(
+            FQButton(
+                text = "⚔️ START FOCUSING",
                 onClick = { onAction(BattleUiAction.StartFocus) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Gold,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            ) {
-                Text(
-                    text = "⚔️ START FOCUSING",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+                modifier = Modifier.fillMaxWidth(),
+                variant = FQButtonVariant.Cta,
+                size = FQButtonSize.Cta
+            )
         }
 
         is FocusTimerState.Focusing -> {
@@ -332,21 +323,18 @@ private fun ActionButtons(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                OutlinedButton(
+                FQButton(
+                    text = "Pause",
                     onClick = { onAction(BattleUiAction.Pause) },
-                    modifier = Modifier.weight(1f).height(56.dp)
-                ) {
-                    Text("Pause", fontWeight = FontWeight.Medium)
-                }
-                OutlinedButton(
+                    modifier = Modifier.weight(1f).height(56.dp),
+                    variant = FQButtonVariant.Outline
+                )
+                FQButton(
+                    text = "Give Up",
                     onClick = { onAction(BattleUiAction.GiveUp) },
                     modifier = Modifier.weight(1f).height(56.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error
-                    )
-                ) {
-                    Text("Give Up", fontWeight = FontWeight.Medium)
-                }
+                    variant = FQButtonVariant.Danger
+                )
             }
         }
 
@@ -362,12 +350,12 @@ private fun ActionButtons(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
-                OutlinedButton(
+                FQButton(
+                    text = "Skip Break",
                     onClick = { onAction(BattleUiAction.SkipBreak) },
-                    modifier = Modifier.fillMaxWidth().height(48.dp)
-                ) {
-                    Text("Skip Break")
-                }
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    variant = FQButtonVariant.Outline
+                )
             }
         }
 
@@ -376,25 +364,18 @@ private fun ActionButtons(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Button(
+                FQButton(
+                    text = "Resume",
                     onClick = { onAction(BattleUiAction.Resume) },
                     modifier = Modifier.weight(1f).height(56.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Gold,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
-                ) {
-                    Text("Resume", fontWeight = FontWeight.Bold)
-                }
-                OutlinedButton(
+                    variant = FQButtonVariant.Cta
+                )
+                FQButton(
+                    text = "Give Up",
                     onClick = { onAction(BattleUiAction.GiveUp) },
                     modifier = Modifier.weight(1f).height(56.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error
-                    )
-                ) {
-                    Text("Give Up", fontWeight = FontWeight.Medium)
-                }
+                    variant = FQButtonVariant.Danger
+                )
             }
         }
     }
@@ -462,22 +443,19 @@ private fun VictoryOverlay(
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(
+                FQButton(
+                    text = "Continue",
                     onClick = onDismiss,
-                    modifier = Modifier.fillMaxWidth().height(48.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Gold,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
-                ) {
-                    Text("Continue")
-                }
-                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    variant = FQButtonVariant.Cta,
+                    size = FQButtonSize.Cta
+                )
+                FQButton(
+                    text = "Take a Break",
                     onClick = onStartBreak,
-                    modifier = Modifier.fillMaxWidth().height(48.dp)
-                ) {
-                    Text("Take a Break")
-                }
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    variant = FQButtonVariant.Outline
+                )
             }
         }
     }
@@ -526,16 +504,13 @@ private fun CampaignCompleteOverlay(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
                 )
-                Button(
+                FQButton(
+                    text = "Continue",
                     onClick = onDismiss,
-                    modifier = Modifier.fillMaxWidth().height(48.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Gold,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
-                ) {
-                    Text("Continue")
-                }
+                    modifier = Modifier.fillMaxWidth(),
+                    variant = FQButtonVariant.Cta,
+                    size = FQButtonSize.Cta
+                )
             }
         }
     }

@@ -3,7 +3,6 @@ package com.focusquest.presentation.components
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 
 /**
@@ -42,14 +41,18 @@ fun ConfirmDialog(
             )
         },
         confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text(confirmText, color = MaterialTheme.colorScheme.error)
-            }
+            FQButton(
+                text = confirmText,
+                onClick = onConfirm,
+                variant = FQButtonVariant.Danger
+            )
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(dismissText)
-            }
+            FQButton(
+                text = dismissText,
+                onClick = onDismiss,
+                variant = FQButtonVariant.Outline
+            )
         }
     )
 }
