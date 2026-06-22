@@ -17,6 +17,11 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.draw.scale
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import com.focusquest.presentation.theme.FocusQuestTheme
 
 /**
@@ -63,8 +68,23 @@ fun TimerDisplay(
     val seconds = remainingSeconds % 60
     val timeText = String.format("%02d:%02d", minutes, seconds)
 
+        val infiniteTransition = rememberInfiniteTransition(label = "timerPulse")
+    val pulseScale by if (remainingSeconds > 0 && remainingSeconds < totalSeconds && isFocusing) {
+        infiniteTransition.animateFloat(
+            initialValue = 1f,
+            targetValue = 1.04f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1000),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "scale"
+        )
+    } else {
+        androidx.compose.runtime.rememberUpdatedState(1f)
+    }
+
     Box(
-        modifier = modifier.size(200.dp),
+        modifier = modifier.size(200.dp).scale(pulseScale),
         contentAlignment = Alignment.Center
     ) {
         Canvas(modifier = Modifier.size(200.dp)) {

@@ -9,6 +9,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
@@ -41,14 +46,19 @@ fun BossSprite(
         else -> "👹"
     }
 
-    val alpha by animateFloatAsState(
-        targetValue = if (isShaking) 0.5f else 1f,
-        animationSpec = tween(durationMillis = 200),
-        label = "bossAlpha"
+    val shakeOffset by animateFloatAsState(
+        targetValue = if (isShaking) 15f else 0f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioHighBouncy, stiffness = Spring.StiffnessMedium),
+        label = "bossShake"
+    )
+    val bossScale by animateFloatAsState(
+        targetValue = if (isShaking) 0.9f else 1.0f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium),
+        label = "bossScale"
     )
 
     Box(
-        modifier = modifier.size(120.dp),
+        modifier = modifier.size(120.dp).offset(x = shakeOffset.dp).scale(bossScale),
         contentAlignment = Alignment.Center
     ) {
         Text(

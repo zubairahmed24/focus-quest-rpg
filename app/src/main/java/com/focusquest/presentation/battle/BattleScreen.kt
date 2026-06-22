@@ -16,14 +16,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.draw.alpha
+import androidx.compose.foundation.layout.offset
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.focusquest.domain.model.BattleResult
@@ -92,19 +96,6 @@ private fun BattleScreenContent(
         return
     }
 
-    var showShareDialog by remember { mutableStateOf(false) }
-
-    if (showShareDialog) {
-        com.focusquest.presentation.components.ShareDialog(
-            playerLevel = state.playerLevel,
-            streak = state.streak,
-            totalFocusTimeFormatted = com.focusquest.util.DateTimeUtils.formatFocusTime(state.totalFocusMinutes),
-            bossesDefeatedCount = state.totalBossesDefeated,
-            totalBossesCount = 5,
-            onDismiss = { showShareDialog = false }
-        )
-    }
-
     // Victory — boss defeated. Delegates to the dedicated VictoryScreen (#12).
     val result = state.lastBattleResult
     if (state.showVictory && result is BattleResult.BossDefeated) {
@@ -114,8 +105,7 @@ private fun BattleScreenContent(
                 isCampaignComplete = state.campaignComplete
             ),
             onContinue = { onAction(BattleUiAction.DismissVictory) },
-            onTakeBreak = { onAction(BattleUiAction.StartBreak) },
-            onShare = { showShareDialog = true }
+            onTakeBreak = { onAction(BattleUiAction.StartBreak) }
         )
         return
     }
@@ -131,8 +121,7 @@ private fun BattleScreenContent(
                 isCampaignComplete = true,
                 isCampaignSummary = true
             ),
-            onContinue = { onAction(BattleUiAction.DismissVictory) },
-            onShare = { showShareDialog = true }
+            onContinue = { onAction(BattleUiAction.DismissVictory) }
         )
         return
     }
@@ -262,7 +251,8 @@ private fun BossSection(
     bossName: String,
     bossTaunt: String,
     bossHp: Int,
-    bossMaxHp: Int
+    bossMaxHp: Int,
+    isShaking: Boolean = false
 ) {
     val spacing = FocusQuestTheme.spacing
     Column(
@@ -275,6 +265,7 @@ private fun BossSection(
         )
         BossSprite(
             bossName = bossName,
+            isShaking = isShaking,
             modifier = Modifier.padding(vertical = spacing.xxs)
         )
         Text(
