@@ -7,20 +7,12 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.view.View
 import androidx.core.content.FileProvider
-import com.google.firebase.analytics.FirebaseAnalytics
 import java.io.File
 import java.io.FileOutputStream
 
 object ShareUtils {
 
     fun shareBitmap(context: Context, view: View, onComplete: () -> Unit = {}) {
-        // Log Firebase event
-        try {
-            val analytics = FirebaseAnalytics.getInstance(context)
-            analytics.logEvent("share_clicked", null)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
 
         // Capture bitmap
         val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)

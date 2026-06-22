@@ -15,9 +15,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
@@ -63,8 +61,7 @@ fun BossSprite(
     ) {
         Text(
             text = emoji,
-            fontSize = 72.sp,
-            modifier = Modifier.alpha(alpha)
+            fontSize = 72.sp
         )
     }
 }

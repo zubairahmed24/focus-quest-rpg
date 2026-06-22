@@ -78,3 +78,9 @@ val Pink80 = Color(0xFFFE64AD)
 val Pink60 = Color(0xFFFF9ECB)
 val Pink40 = Color(0xFFFFC5E0)
 val Pink20 = Color(0xFFFFECF5)
+
+// ----------------------------------------------------------------------------
+// Custom / legacy colors imported by screens
+// ----------------------------------------------------------------------------
+val Gold = Color(0xFFFFD700)
+val StreakOrange = Color(0xFFF97316)

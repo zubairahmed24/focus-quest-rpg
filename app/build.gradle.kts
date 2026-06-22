@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kapt)
-    alias(libs.plugins.google.services)
+    // alias(libs.plugins.google.services)
 }
 
 android {
@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.compose.ui.graphics)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons.extended)
     implementation(libs.navigation.compose)
     debugImplementation(libs.compose.ui.tooling)
 
@@ -82,8 +83,8 @@ dependencies {
     kapt(libs.room.compiler)
 
     // Firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
+    // implementation(platform(libs.firebase.bom))
+    // implementation(libs.firebase.analytics)
 
     // Testing
     testImplementation(libs.junit)
